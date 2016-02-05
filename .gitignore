@@ -1,1 +1,8 @@
 *.user
+*.lib
+*.log
+*.obj
+*.tlog
+*.lastbuildstate
+*.idb
+*.pdb
