@@ -128,9 +128,16 @@ LuaTypePtr LuaFile::Call(string functionName, int expectedResults, vector<LuaTyp
 	return luaResult;
 }
 
+#ifdef LUA_FUNCTION_CLASS
 void LuaFile::RegisterFunction(LuaFunction * func)
 {
 	lua_register(m_luaState, func->GetName().c_str(), func->GetFunctionPtr());
+}
+#endif
+
+void LuaFile::RegisterFunction(string funcName, lua_CFunction func)
+{
+	lua_register(m_luaState, funcName.c_str(), func);
 }
 
 LuaTypePtr LuaFile::NewNum(double num)

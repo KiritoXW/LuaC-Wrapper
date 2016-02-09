@@ -1,5 +1,7 @@
 #include "LuaFunction.h"
 
+#ifdef LUA_FUNCTION_CLASS
+
 // STL Includes
 #include <exception>
 #include <memory>
@@ -11,9 +13,12 @@ using std::dynamic_pointer_cast;
 // Initialize the LuaFunction
 string LuaFunction::s_name = "";
 vector<LuaType::LUA_TYPE> LuaFunction::s_paramTypes = {};
+LuaFunction* LuaFunction::instance = nullptr;
 
-LuaFunction::LuaFunction(void)
+LuaFunction::LuaFunction(string functionName, vector<LuaType::LUA_TYPE> functionParams)
 {
+	s_name = functionName;
+	s_paramTypes = functionParams;
 }
 
 LuaFunction * LuaFunction::Instance()
@@ -122,3 +127,5 @@ int LuaFunction::call(lua_State * caller)
 	// -- Report the Returns
 	return returns.size();
 }
+
+#endif

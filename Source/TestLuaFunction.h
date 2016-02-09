@@ -1,5 +1,7 @@
 #pragma once
 
+#ifdef LUA_FUNCTION_CLASS
+
 // STL Includes
 #include <iostream>
 #include <memory>
@@ -9,6 +11,10 @@
 
 class TestLuaFunction : public LuaFunction
 {
+public:
+	TestLuaFunction() : LuaFunction("testFunc", vector<LuaType::LUA_TYPE>({ LuaType::LT_STRING })) { instance = this; }
+
+protected:
 	void function(vector<LuaTypePtr> paramList, vector<LuaTypePtr>& returnList)
 	{
 		// Process Params
@@ -25,7 +31,4 @@ class TestLuaFunction : public LuaFunction
 	}
 };
 
-// Initialize the LuaFunction
-string TestLuaFunction::s_name = "testFunc";
-vector<LuaType::LUA_TYPE> TestLuaFunction::s_paramTypes = { LuaType::LT_STRING };
-LuaFunction* TestLuaFunction::instance = new TestLuaFunction();
+#endif
