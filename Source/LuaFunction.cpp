@@ -1,7 +1,5 @@
 #include "LuaFunction.h"
 
-#ifdef LUA_FUNCTION_CLASS
-
 // STL Includes
 #include <exception>
 #include <memory>
@@ -10,81 +8,50 @@
 using std::runtime_error;
 using std::dynamic_pointer_cast;
 
-// Initialize the LuaFunction
-string LuaFunction::s_name = "";
-vector<LuaType::LUA_TYPE> LuaFunction::s_paramTypes = {};
-LuaFunction* LuaFunction::instance = nullptr;
-
-LuaFunction::LuaFunction(string functionName, vector<LuaType::LUA_TYPE> functionParams)
+void LuaFunc::preCall(lua_State* caller, vector<LuaTypePtr>& params, vector<LuaType::LUA_TYPE> paramsTypeList)
 {
-	s_name = functionName;
-	s_paramTypes = functionParams;
-}
-
-LuaFunction * LuaFunction::Instance()
-{
-	return instance;
-}
-
-LuaFunction::~LuaFunction(void)
-{
-}
-
-string LuaFunction::GetName(void)
-{
-	return s_name;
-}
-
-lua_CFunction LuaFunction::GetFunctionPtr(void)
-{
-	return call;
-}
-
-int LuaFunction::call(lua_State * caller)
-{
-	vector<LuaTypePtr> params;
-	vector<LuaTypePtr> returns;
-
 	// Params
 	// -- Check if the correct number of params is passed in
-	if (lua_gettop(caller) != s_paramTypes.size())
+	if (lua_gettop(caller) != paramsTypeList.size())
 	{
 		throw new runtime_error("Incorrect number of parameters passed in!");
 	}
-	// -- Check the params passed in
-	for (size_t i = 0; i < s_paramTypes.size(); ++i)
+
+	// -- Check the params passed in 
+	for (size_t i = 0; i < paramsTypeList.size(); ++i)
 	{
 		bool valid = false;
+		int luaIndex = i + 1; // Lua starts at 1, not 0
 
-		switch (s_paramTypes[i])
+		switch (paramsTypeList[i])
 		{
-			case LuaType::LT_BOOL:
+		case LuaType::LT_BOOL:
+		{
+			if (lua_isboolean(caller, luaIndex))
 			{
-				if (lua_isboolean(caller, i))
-				{
-					params.push_back(LuaFile::NewBool(lua_toboolean(caller, i)));
-					valid = true;
-				}
+				params.push_back(LuaFile::NewBool(lua_toboolean(caller, luaIndex)));
+				valid = true;
 			}
-			break;
-			case LuaType::LT_NUMBER:
+		}
+		break;
+		case LuaType::LT_NUMBER:
+		{
+			if (lua_isnumber(caller, luaIndex))
 			{
-				if (lua_isnumber(caller, i))
-				{
-					params.push_back(LuaFile::NewNum(lua_tonumber(caller, i)));
-					valid = true;
-				}
+				params.push_back(LuaFile::NewNum(lua_tonumber(caller, luaIndex)));
+				valid = true;
 			}
-			break;
-			case LuaType::LT_STRING:
+		}
+		break;
+		case LuaType::LT_STRING:
+		{
+			if (lua_isstring(caller, luaIndex))
 			{
-				if (lua_isstring(caller, i))
-				{
-					params.push_back(LuaFile::NewStr(lua_tostring(caller, i)));
-					valid = true;
-				}
+				params.push_back(LuaFile::NewStr(lua_tostring(caller, luaIndex)));
+				valid = true;
 			}
-			break;
+		}
+		break;
 		}
 
 		if (!valid)
@@ -92,10 +59,10 @@ int LuaFunction::call(lua_State * caller)
 			throw new runtime_error("Incorrect type of parameters passed in!");
 		}
 	}
+}
 
-	// Function Logic
-	instance->function(params, returns);
-
+int LuaFunc::postCall(lua_State* caller, vector<LuaTypePtr>& returns)
+{
 	// Returns
 	// -- Push returns onto the Stack
 	for (auto retVal : returns)
@@ -124,8 +91,5 @@ int LuaFunction::call(lua_State * caller)
 		}
 	}
 
-	// -- Report the Returns
 	return returns.size();
 }
-
-#endif

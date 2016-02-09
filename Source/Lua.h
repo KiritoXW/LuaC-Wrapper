@@ -25,11 +25,6 @@ using std::vector;
 typedef shared_ptr<LuaType> LuaTypePtr;
 typedef vector<LuaTypePtr> LuaFuncList;
 
-// Forward Declarations
-#ifdef LUA_FUNCTION_CLASS
-	class LuaFunction;
-#endif
-
 class LuaFile
 {
 private:
@@ -60,11 +55,7 @@ public:
 	/*
 	 * C++ Function Exporting
 	 */
-#ifdef LUA_FUNCTION_CLASS
-	void RegisterFunction(LuaFunction* func);
-#else
 	void RegisterFunction(string funcName, lua_CFunction func);
-#endif
 
 	/*
 	 * Functions to easily produce LuaTypes
@@ -72,6 +63,13 @@ public:
 	static LuaTypePtr NewNum(double num);
 	static LuaTypePtr NewBool(bool b);
 	static LuaTypePtr NewStr(string str);
+
+	/*
+	 * Functions to easily extract LuaTypes
+	 */
+	static double ExtNum(LuaTypePtr numPtr);
+	static bool	ExtBool(LuaTypePtr boolPtr);
+	static string ExtStr(LuaTypePtr strPtr);
 
 private:
 	// For script loading

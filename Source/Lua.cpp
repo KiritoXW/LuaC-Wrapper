@@ -46,6 +46,7 @@ bool LuaFile::RunScript(void)
 			throw new runtime_error("Failed to execute Lua script!");
 			return false;
 		}
+
 		m_scriptExecuted = true;
 
 		return true;
@@ -128,13 +129,6 @@ LuaTypePtr LuaFile::Call(string functionName, int expectedResults, vector<LuaTyp
 	return luaResult;
 }
 
-#ifdef LUA_FUNCTION_CLASS
-void LuaFile::RegisterFunction(LuaFunction * func)
-{
-	lua_register(m_luaState, func->GetName().c_str(), func->GetFunctionPtr());
-}
-#endif
-
 void LuaFile::RegisterFunction(string funcName, lua_CFunction func)
 {
 	lua_register(m_luaState, funcName.c_str(), func);
@@ -153,6 +147,21 @@ LuaTypePtr LuaFile::NewBool(bool b)
 LuaTypePtr LuaFile::NewStr(string str)
 {
 	return LuaTypePtr(new LuaString(str));
+}
+
+double LuaFile::ExtNum(LuaTypePtr numPtr)
+{
+	return dynamic_pointer_cast<LuaNumber>(numPtr).get()->Number;
+}
+
+bool LuaFile::ExtBool(LuaTypePtr boolPtr)
+{
+	return dynamic_pointer_cast<LuaBoolean>(boolPtr).get()->Boolean;
+}
+
+string LuaFile::ExtStr(LuaTypePtr strPtr)
+{
+	return dynamic_pointer_cast<LuaString>(strPtr).get()->String;
 }
 
 bool LuaFile::loadScript(string filename)
