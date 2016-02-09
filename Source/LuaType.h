@@ -1,3 +1,20 @@
+/******************************************************************************/
+/*!
+\file	LuaType.h
+\author Tng Kah Wei
+\brief	Wrapper classes for primitive types used in Lua. This is to allow 
+		seamless passing in and out of different variables between Lua script
+		and native C++ code. Pointers are primarily used to interact with
+		these types to allow storage in vectors for type-specific processing
+		afterwards.
+
+		Use the LuaType Producer functions to easily create a LuaType of the
+		desired primitive type.
+
+		Likewise, use the LuaType Extractor functions to easily obtain the
+		C++ primitive type from the LuaType variant.
+*/
+/******************************************************************************/
 #pragma once
 
 // STL Includes
@@ -10,6 +27,12 @@ using std::shared_ptr;
 
 namespace Lua
 {
+	/******************************************************************************/
+	/*!
+			Struct Type:
+	\brief	The basic primitive type that all types inherit from.
+	*/
+	/******************************************************************************/
 	struct Type
 	{
 		enum LUA_TYPE
@@ -20,12 +43,19 @@ namespace Lua
 			LT_TOTAL
 		};
 
-		virtual ~Type() {}
+		virtual ~Type() = 0 {};
 	};
 
 	// Type Definitions
 	typedef shared_ptr<Type> LuaTypePtr;
 
+	/******************************************************************************/
+	/*!
+			Struct Number:
+	\brief	The numerical type that all Lua-C++ interactions in this Lua wrapper
+			use.
+	*/
+	/******************************************************************************/
 	struct Number : public Type
 	{
 		double Num;
@@ -34,6 +64,13 @@ namespace Lua
 		~Number() {}
 	};
 
+	/******************************************************************************/
+	/*!
+			Struct Boolean:
+	\brief	The boolean type that all Lua-C++ interactions in this Lua wrapper
+			use.
+	*/
+	/******************************************************************************/
 	struct Boolean : public Type
 	{
 		bool Bool;
@@ -42,6 +79,13 @@ namespace Lua
 		~Boolean() {}
 	};
 
+	/******************************************************************************/
+	/*!
+			Struct String:
+	\brief	The string type that all Lua-C++ interactions in this Lua wrapper
+			use.
+	*/
+	/******************************************************************************/
 	struct String : public Type
 	{
 		string Str;
@@ -51,15 +95,15 @@ namespace Lua
 	};
 
 	/*
-	* Functions to easily produce LuaTypes
-	*/
+	 * LuaType Producers
+	 */
 	LuaTypePtr NewNum(double num);
 	LuaTypePtr NewBool(bool b);
 	LuaTypePtr NewStr(string str);
 
 	/*
-	* Functions to easily extract LuaTypes
-	*/
+	 * LuaType Extractors
+	 */
 	double ExtNum(LuaTypePtr numPtr);
 	bool ExtBool(LuaTypePtr boolPtr);
 	string ExtStr(LuaTypePtr strPtr);

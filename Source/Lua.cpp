@@ -60,6 +60,7 @@ LuaTypePtr LuaFile::GetValue(string varName)
 {
 	LuaTypePtr luaResult;
 
+	// Ensure that the script has been executed so that we can actually obtain something.
 	if (!m_scriptExecuted)
 	{
 		RunScript();
@@ -98,6 +99,12 @@ string LuaFile::GetString(string varName)
 
 LuaTypePtr LuaFile::Call(string functionName, int expectedResults, vector<LuaTypePtr> params)
 {
+	// Ensure that the script has been executed so that we can actually obtain something.
+	if (!m_scriptExecuted)
+	{
+		RunScript();
+	}
+
 	// Push the function to the top
 	lua_getglobal(m_luaState, functionName.c_str());
 

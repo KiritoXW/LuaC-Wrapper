@@ -1,3 +1,10 @@
+/******************************************************************************/
+/*!
+\file	Lua.h
+\author Tng Kah Wei
+\brief	Lua Wrapper for working with Lua with clean and simple syntax.
+*/
+/******************************************************************************/
 #pragma once
 
 // STL Includes
@@ -24,6 +31,26 @@ namespace Lua
 	// Type Definitions
 	typedef vector<LuaTypePtr> LuaFuncList;
 
+	/******************************************************************************/
+	/*!
+			Class State:
+	\brief	A LuaFile is a class that holds a single lua_State and works with it.
+			Using LuaFile, you can:
+				- Get a Global Value
+				- Execute Lua Scripts
+				- Register a C++ function for exporting for use in the Lua Script
+				- Call Lua Functions from C++ via LuaFile
+
+			Note that RunScript() must be called to execute the code in the Lua
+			Script. However, if other functions such as GetValue() and Call()
+			require the script to be run before it can be used. Therefore,
+			calling GetValue() and Call() will trigger RunScript() and thus
+			execute scripts in the Lua Script.
+
+			As such, it is advised to not have any scripts globally in the Lua
+			Script.
+	*/
+	/******************************************************************************/
 	class LuaFile
 	{
 	private:
