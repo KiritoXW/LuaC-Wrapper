@@ -40,6 +40,7 @@ namespace Lua
 			LT_NUMBER,
 			LT_BOOL,
 			LT_STRING,
+			LT_POINTER,
 			LT_TOTAL
 		};
 
@@ -94,12 +95,28 @@ namespace Lua
 		~String() {}
 	};
 
+	/******************************************************************************/
+	/*!
+			Struct Pointer:
+	\brief	The C Pointer also known by Lua as "LightUserData" that allows passing
+			of C++ pointers to Lua.
+	*/
+	/******************************************************************************/
+	struct Pointer : public Type
+	{
+		void* Ptr;
+
+		Pointer(void* ptr = nullptr) : Ptr(ptr) {}
+		~Pointer() {}
+	};
+
 	/*
 	 * LuaType Producers
 	 */
 	LuaTypePtr NewNum(double num);
 	LuaTypePtr NewBool(bool b);
 	LuaTypePtr NewStr(string str);
+	LuaTypePtr NewPtr(void* ptr);
 
 	/*
 	 * LuaType Extractors
@@ -107,4 +124,5 @@ namespace Lua
 	double ExtNum(LuaTypePtr numPtr);
 	bool ExtBool(LuaTypePtr boolPtr);
 	string ExtStr(LuaTypePtr strPtr);
+	void* ExtPtr(LuaTypePtr ptrPtr);
 }

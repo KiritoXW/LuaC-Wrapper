@@ -10,6 +10,7 @@ using std::dynamic_pointer_cast;
 using Lua::Number;
 using Lua::String;
 using Lua::Boolean;
+using Lua::Pointer;
 
 void LuaFunc::preCall(lua_State* caller, vector<LuaTypePtr>& params, vector<Type::LUA_TYPE> paramsTypeList)
 {
@@ -28,33 +29,45 @@ void LuaFunc::preCall(lua_State* caller, vector<LuaTypePtr>& params, vector<Type
 
 		switch (paramsTypeList[i])
 		{
-		case Type::LT_BOOL:
-		{
-			if (lua_isboolean(caller, luaIndex))
+			case Type::LT_BOOL:
 			{
-				params.push_back(Lua::NewBool(lua_toboolean(caller, luaIndex)));
-				valid = true;
+				if (lua_isboolean(caller, luaIndex))
+				{
+					params.push_back(Lua::NewBool(lua_toboolean(caller, luaIndex)));
+					valid = true;
+				}
 			}
-		}
-		break;
-		case Type::LT_NUMBER:
-		{
-			if (lua_isnumber(caller, luaIndex))
+			break;
+
+			case Type::LT_NUMBER:
 			{
-				params.push_back(Lua::NewNum(lua_tonumber(caller, luaIndex)));
-				valid = true;
+				if (lua_isnumber(caller, luaIndex))
+				{
+					params.push_back(Lua::NewNum(lua_tonumber(caller, luaIndex)));
+					valid = true;
+				}
 			}
-		}
-		break;
-		case Type::LT_STRING:
-		{
-			if (lua_isstring(caller, luaIndex))
+			break;
+
+			case Type::LT_STRING:
 			{
-				params.push_back(Lua::NewStr(lua_tostring(caller, luaIndex)));
-				valid = true;
+				if (lua_isstring(caller, luaIndex))
+				{
+					params.push_back(Lua::NewStr(lua_tostring(caller, luaIndex)));
+					valid = true;
+				}
 			}
-		}
-		break;
+			break;
+
+			case Type::LT_POINTER:
+			{
+				if (lua_islightuserdata(caller, luaIndex))
+				{
+					params.push_back(Lua::NewPtr(lua_touserdata(caller, luaIndex)));
+					valid = true;
+				}
+			}
+			break;
 		}
 
 		if (!valid)
@@ -74,6 +87,7 @@ int LuaFunc::postCall(lua_State* caller, vector<LuaTypePtr>& returns)
 		Boolean* lb = dynamic_pointer_cast<Boolean>(retVal).get();
 		Number* ln = dynamic_pointer_cast<Number>(retVal).get();
 		String* ls = dynamic_pointer_cast<String>(retVal).get();
+
 
 		// Push it in appropriately
 		if (lb)

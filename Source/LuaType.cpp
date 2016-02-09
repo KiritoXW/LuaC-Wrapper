@@ -22,6 +22,11 @@ LuaTypePtr Lua::NewStr(string str)
 	return LuaTypePtr(new String(str));
 }
 
+LuaTypePtr Lua::NewPtr(void * ptr)
+{
+	return LuaTypePtr(new Pointer(ptr));
+}
+
 double Lua::ExtNum(LuaTypePtr numPtr)
 {
 	return dynamic_pointer_cast<Number>(numPtr).get()->Num;
@@ -35,4 +40,9 @@ bool Lua::ExtBool(LuaTypePtr boolPtr)
 string Lua::ExtStr(LuaTypePtr strPtr)
 {
 	return dynamic_pointer_cast<String>(strPtr).get()->Str;
+}
+
+void * Lua::ExtPtr(LuaTypePtr ptrPtr)
+{
+	return dynamic_pointer_cast<Pointer>(ptrPtr).get()->Ptr;
 }

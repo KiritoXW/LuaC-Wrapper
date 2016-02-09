@@ -97,6 +97,11 @@ string LuaFile::GetString(string varName)
 	return dynamic_pointer_cast<String>(GetValue(varName)).get()->Str;
 }
 
+void * Lua::LuaFile::GetPointer(string varName)
+{
+	return dynamic_pointer_cast<Pointer>(GetValue(varName)).get()->Ptr;
+}
+
 LuaTypePtr LuaFile::Call(string functionName, int expectedResults, vector<LuaTypePtr> params)
 {
 	// Ensure that the script has been executed so that we can actually obtain something.
@@ -108,7 +113,7 @@ LuaTypePtr LuaFile::Call(string functionName, int expectedResults, vector<LuaTyp
 	// Push the function to the top
 	lua_getglobal(m_luaState, functionName.c_str());
 
-	// Loop through all elements in the Variable Argument List
+	// Loop through all elements in the Params List
 	for (auto param : params)
 	{
 		if (auto luaNum = dynamic_pointer_cast<Number>(param))
@@ -122,6 +127,10 @@ LuaTypePtr LuaFile::Call(string functionName, int expectedResults, vector<LuaTyp
 		else if (auto luaStr = dynamic_pointer_cast<String>(param))
 		{
 			lua_pushstring(m_luaState, luaStr->Str.c_str());
+		}
+		else if (auto luaPtr = dynamic_pointer_cast<Pointer>(param))
+		{
+			lua_pushlightuserdata(m_luaState, luaPtr->Ptr);
 		}
 	}
 
@@ -178,6 +187,11 @@ LuaTypePtr LuaFile::getTopLuaValue(void)
 	{
 		// Store this in a LuaBoolean in luaResult
 		luaResult.reset(new String(lua_tostring(m_luaState, lua_gettop(m_luaState))));
+	}
+	else if (lua_islightuserdata(m_luaState, lua_gettop(m_luaState)))
+	{
+		// Store this in a LuaPointer in luaResult
+		luaResult.reset(new Pointer(lua_touserdata(m_luaState, lua_gettop(m_luaState))));
 	}
 
 	return luaResult;

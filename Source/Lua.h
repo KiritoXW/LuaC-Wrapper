@@ -72,6 +72,7 @@ namespace Lua
 		double GetNumber(string varName);
 		bool GetBoolean(string varName);
 		string GetString(string varName);
+		void* GetPointer(string varName);
 
 		/*
 		 * Lua Function Importing
