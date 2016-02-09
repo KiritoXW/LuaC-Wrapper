@@ -2,43 +2,65 @@
 
 // STL Includes
 #include <string>
+#include <memory>
 
 // Using Directives
 using std::string;
+using std::shared_ptr;
 
-struct LuaType
+namespace Lua
 {
-	enum LUA_TYPE
+	struct Type
 	{
-		LT_NUMBER,
-		LT_BOOL,
-		LT_STRING,
-		LT_TOTAL
+		enum LUA_TYPE
+		{
+			LT_NUMBER,
+			LT_BOOL,
+			LT_STRING,
+			LT_TOTAL
+		};
+
+		virtual ~Type() {}
 	};
 
-	virtual ~LuaType() {}
-};
+	// Type Definitions
+	typedef shared_ptr<Type> LuaTypePtr;
 
-struct LuaNumber : public LuaType
-{
-	double Number;
+	struct Number : public Type
+	{
+		double Num;
 
-	LuaNumber(double number = 0) : Number(number) {}
-	~LuaNumber() {}
-};
+		Number(double number = 0) : Num(number) {}
+		~Number() {}
+	};
 
-struct LuaBoolean : public LuaType
-{
-	bool Boolean;
+	struct Boolean : public Type
+	{
+		bool Bool;
 
-	LuaBoolean(bool boolean = 0) : Boolean(boolean) {}
-	~LuaBoolean() {}
-};
+		Boolean(bool boolean = 0) : Bool(boolean) {}
+		~Boolean() {}
+	};
 
-struct LuaString : public LuaType
-{
-	string String;
+	struct String : public Type
+	{
+		string Str;
 
-	LuaString(string str = 0) : String(str) {}
-	~LuaString() {}
-};
+		String(string str = 0) : Str(str) {}
+		~String() {}
+	};
+
+	/*
+	* Functions to easily produce LuaTypes
+	*/
+	LuaTypePtr NewNum(double num);
+	LuaTypePtr NewBool(bool b);
+	LuaTypePtr NewStr(string str);
+
+	/*
+	* Functions to easily extract LuaTypes
+	*/
+	double ExtNum(LuaTypePtr numPtr);
+	bool ExtBool(LuaTypePtr boolPtr);
+	string ExtStr(LuaTypePtr strPtr);
+}

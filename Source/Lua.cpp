@@ -10,6 +10,7 @@
 // Using Directives
 using std::dynamic_pointer_cast;
 using std::runtime_error;
+using namespace Lua;
 
 LuaFile::LuaFile(string luaFile)
 	: m_luaState(nullptr)
@@ -82,17 +83,17 @@ LuaTypePtr LuaFile::GetValue(string varName)
 
 double LuaFile::GetNumber(string varName)
 {
-	return dynamic_pointer_cast<LuaNumber>(GetValue(varName)).get()->Number;
+	return dynamic_pointer_cast<Number>(GetValue(varName)).get()->Num;
 }
 
 bool LuaFile::GetBoolean(string varName)
 {
-	return dynamic_pointer_cast<LuaBoolean>(GetValue(varName)).get()->Boolean;;
+	return dynamic_pointer_cast<Boolean>(GetValue(varName)).get()->Bool;;
 }
 
 string LuaFile::GetString(string varName)
 {
-	return dynamic_pointer_cast<LuaString>(GetValue(varName)).get()->String;
+	return dynamic_pointer_cast<String>(GetValue(varName)).get()->Str;
 }
 
 LuaTypePtr LuaFile::Call(string functionName, int expectedResults, vector<LuaTypePtr> params)
@@ -103,17 +104,17 @@ LuaTypePtr LuaFile::Call(string functionName, int expectedResults, vector<LuaTyp
 	// Loop through all elements in the Variable Argument List
 	for (auto param : params)
 	{
-		if (auto luaNum = dynamic_pointer_cast<LuaNumber>(param))
+		if (auto luaNum = dynamic_pointer_cast<Number>(param))
 		{
-			lua_pushnumber(m_luaState, luaNum->Number);
+			lua_pushnumber(m_luaState, luaNum->Num);
 		}
-		else if (auto luaBool = dynamic_pointer_cast<LuaBoolean>(param))
+		else if (auto luaBool = dynamic_pointer_cast<Boolean>(param))
 		{
-			lua_pushboolean(m_luaState, luaBool->Boolean);
+			lua_pushboolean(m_luaState, luaBool->Bool);
 		}
-		else if (auto luaStr = dynamic_pointer_cast<LuaString>(param))
+		else if (auto luaStr = dynamic_pointer_cast<String>(param))
 		{
-			lua_pushstring(m_luaState, luaStr->String.c_str());
+			lua_pushstring(m_luaState, luaStr->Str.c_str());
 		}
 	}
 
@@ -132,36 +133,6 @@ LuaTypePtr LuaFile::Call(string functionName, int expectedResults, vector<LuaTyp
 void LuaFile::RegisterFunction(string funcName, lua_CFunction func)
 {
 	lua_register(m_luaState, funcName.c_str(), func);
-}
-
-LuaTypePtr LuaFile::NewNum(double num)
-{
-	return LuaTypePtr(new LuaNumber(num));
-}
-
-LuaTypePtr LuaFile::NewBool(bool b)
-{
-	return LuaTypePtr(new LuaBoolean(b));
-}
-
-LuaTypePtr LuaFile::NewStr(string str)
-{
-	return LuaTypePtr(new LuaString(str));
-}
-
-double LuaFile::ExtNum(LuaTypePtr numPtr)
-{
-	return dynamic_pointer_cast<LuaNumber>(numPtr).get()->Number;
-}
-
-bool LuaFile::ExtBool(LuaTypePtr boolPtr)
-{
-	return dynamic_pointer_cast<LuaBoolean>(boolPtr).get()->Boolean;
-}
-
-string LuaFile::ExtStr(LuaTypePtr strPtr)
-{
-	return dynamic_pointer_cast<LuaString>(strPtr).get()->String;
 }
 
 bool LuaFile::loadScript(string filename)
@@ -187,19 +158,19 @@ LuaTypePtr LuaFile::getTopLuaValue(void)
 	if (lua_isnumber(m_luaState, lua_gettop(m_luaState)))
 	{
 		// Store this in a LuaNumber in luaResult
-		luaResult.reset(new LuaNumber(lua_tointeger(m_luaState, lua_gettop(m_luaState))));
+		luaResult.reset(new Number(lua_tointeger(m_luaState, lua_gettop(m_luaState))));
 	}
 	// If this global is a boolean,
 	else if (lua_isboolean(m_luaState, lua_gettop(m_luaState)))
 	{
 		// Store this in a LuaBoolean in luaResult
-		luaResult.reset(new LuaBoolean(lua_toboolean(m_luaState, lua_gettop(m_luaState))));
+		luaResult.reset(new Boolean(lua_toboolean(m_luaState, lua_gettop(m_luaState))));
 	}
 	// If this global is a string,
 	else if (lua_isstring(m_luaState, lua_gettop(m_luaState)))
 	{
 		// Store this in a LuaBoolean in luaResult
-		luaResult.reset(new LuaString(lua_tostring(m_luaState, lua_gettop(m_luaState))));
+		luaResult.reset(new String(lua_tostring(m_luaState, lua_gettop(m_luaState))));
 	}
 
 	return luaResult;

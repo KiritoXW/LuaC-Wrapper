@@ -2,7 +2,6 @@
 
 // STL Includes
 #include <string>
-#include <memory>
 #include <vector>
 
 // LUA Includes
@@ -18,62 +17,49 @@ extern "C"
 
 // Using Directives
 using std::string;
-using std::shared_ptr;
 using std::vector;
 
-// Type Definitions
-typedef shared_ptr<LuaType> LuaTypePtr;
-typedef vector<LuaTypePtr> LuaFuncList;
-
-class LuaFile
+namespace Lua
 {
-private:
-	lua_State* m_luaState;
-	bool m_scriptExecuted;
+	// Type Definitions
+	typedef vector<LuaTypePtr> LuaFuncList;
 
-public:
-	LuaFile(string luaFile);
-	~LuaFile(void);
+	class LuaFile
+	{
+	private:
+		lua_State* m_luaState;
+		bool m_scriptExecuted;
 
-	// Life time
-	bool RunScript(void);
+	public:
+		LuaFile(string luaFile);
+		~LuaFile(void);
 
-	/*
-	 * Variable Acquisition
-	 */
-	// Functions to get values from the stack
-	LuaTypePtr GetValue(string varName);
-	double GetNumber(string varName);
-	bool GetBoolean(string varName);
-	string GetString(string varName);
+		// Life time
+		bool RunScript(void);
 
-	/*
-	 * Lua Function Importing
-	 */
-	LuaTypePtr Call(string functionName, int expectedResults, vector<LuaTypePtr> params);
+		/*
+		 * Variable Acquisition
+		 */
+		 // Functions to get values from the stack
+		LuaTypePtr GetValue(string varName);
+		double GetNumber(string varName);
+		bool GetBoolean(string varName);
+		string GetString(string varName);
 
-	/*
-	 * C++ Function Exporting
-	 */
-	void RegisterFunction(string funcName, lua_CFunction func);
+		/*
+		 * Lua Function Importing
+		 */
+		LuaTypePtr Call(string functionName, int expectedResults, vector<LuaTypePtr> params);
 
-	/*
-	 * Functions to easily produce LuaTypes
-	 */
-	static LuaTypePtr NewNum(double num);
-	static LuaTypePtr NewBool(bool b);
-	static LuaTypePtr NewStr(string str);
+		/*
+		 * C++ Function Exporting
+		 */
+		void RegisterFunction(string funcName, lua_CFunction func);
 
-	/*
-	 * Functions to easily extract LuaTypes
-	 */
-	static double ExtNum(LuaTypePtr numPtr);
-	static bool	ExtBool(LuaTypePtr boolPtr);
-	static string ExtStr(LuaTypePtr strPtr);
-
-private:
-	// For script loading
-	bool loadScript(string filename);
-	// For converting the top value in the stack into a LuaTypePtr
-	LuaTypePtr getTopLuaValue(void);
-};
+	private:
+		// For script loading
+		bool loadScript(string filename);
+		// For converting the top value in the stack into a LuaTypePtr
+		LuaTypePtr getTopLuaValue(void);
+	};
+}

@@ -7,8 +7,11 @@
 // Using Directives
 using std::runtime_error;
 using std::dynamic_pointer_cast;
+using Lua::Number;
+using Lua::String;
+using Lua::Boolean;
 
-void LuaFunc::preCall(lua_State* caller, vector<LuaTypePtr>& params, vector<LuaType::LUA_TYPE> paramsTypeList)
+void LuaFunc::preCall(lua_State* caller, vector<LuaTypePtr>& params, vector<Type::LUA_TYPE> paramsTypeList)
 {
 	// Params
 	// -- Check if the correct number of params is passed in
@@ -25,29 +28,29 @@ void LuaFunc::preCall(lua_State* caller, vector<LuaTypePtr>& params, vector<LuaT
 
 		switch (paramsTypeList[i])
 		{
-		case LuaType::LT_BOOL:
+		case Type::LT_BOOL:
 		{
 			if (lua_isboolean(caller, luaIndex))
 			{
-				params.push_back(LuaFile::NewBool(lua_toboolean(caller, luaIndex)));
+				params.push_back(Lua::NewBool(lua_toboolean(caller, luaIndex)));
 				valid = true;
 			}
 		}
 		break;
-		case LuaType::LT_NUMBER:
+		case Type::LT_NUMBER:
 		{
 			if (lua_isnumber(caller, luaIndex))
 			{
-				params.push_back(LuaFile::NewNum(lua_tonumber(caller, luaIndex)));
+				params.push_back(Lua::NewNum(lua_tonumber(caller, luaIndex)));
 				valid = true;
 			}
 		}
 		break;
-		case LuaType::LT_STRING:
+		case Type::LT_STRING:
 		{
 			if (lua_isstring(caller, luaIndex))
 			{
-				params.push_back(LuaFile::NewStr(lua_tostring(caller, luaIndex)));
+				params.push_back(Lua::NewStr(lua_tostring(caller, luaIndex)));
 				valid = true;
 			}
 		}
@@ -68,22 +71,22 @@ int LuaFunc::postCall(lua_State* caller, vector<LuaTypePtr>& returns)
 	for (auto retVal : returns)
 	{
 		// Determine the type of return
-		LuaBoolean* lb = dynamic_pointer_cast<LuaBoolean>(retVal).get();
-		LuaNumber* ln = dynamic_pointer_cast<LuaNumber>(retVal).get();
-		LuaString* ls = dynamic_pointer_cast<LuaString>(retVal).get();
+		Boolean* lb = dynamic_pointer_cast<Boolean>(retVal).get();
+		Number* ln = dynamic_pointer_cast<Number>(retVal).get();
+		String* ls = dynamic_pointer_cast<String>(retVal).get();
 
 		// Push it in appropriately
 		if (lb)
 		{
-			lua_pushboolean(caller, lb->Boolean);
+			lua_pushboolean(caller, lb->Bool);
 		}
 		else if (ln)
 		{
-			lua_pushnumber(caller, ln->Number);
+			lua_pushnumber(caller, ln->Num);
 		}
 		else if (ls)
 		{
-			lua_pushstring(caller, ls->String.c_str());
+			lua_pushstring(caller, ls->Str.c_str());
 		}
 		else
 		{
