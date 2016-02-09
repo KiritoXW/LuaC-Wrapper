@@ -26,6 +26,6 @@ class TestLuaFunction : public LuaFunction
 };
 
 // Initialize the LuaFunction
-string TestLuaFunction::s_name = "";
+string TestLuaFunction::s_name = "testFunc";
 vector<LuaType::LUA_TYPE> TestLuaFunction::s_paramTypes = { LuaType::LT_STRING };
 LuaFunction* TestLuaFunction::instance = new TestLuaFunction();

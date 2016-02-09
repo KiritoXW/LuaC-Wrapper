@@ -14,6 +14,7 @@ protected:
 
 	LuaFunction(void);
 public:
+	static LuaFunction* Instance();
 	virtual ~LuaFunction(void);
 
 	// Getters

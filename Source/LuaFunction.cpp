@@ -16,6 +16,11 @@ LuaFunction::LuaFunction(void)
 {
 }
 
+LuaFunction * LuaFunction::Instance()
+{
+	return instance;
+}
+
 LuaFunction::~LuaFunction(void)
 {
 }
