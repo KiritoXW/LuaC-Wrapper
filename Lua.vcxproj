@@ -12,9 +12,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Lua.cpp" />
+    <ClCompile Include="Source\LuaFunction.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\TestLuaFunction.h" />
     <ClInclude Include="Source\Lua.h" />
+    <ClInclude Include="Source\LuaFunction.h" />
     <ClInclude Include="Source\LuaType.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

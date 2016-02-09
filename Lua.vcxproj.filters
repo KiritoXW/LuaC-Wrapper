@@ -18,12 +18,21 @@
     <ClCompile Include="Source\Lua.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\LuaFunction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Lua.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\LuaType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\LuaFunction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\TestLuaFunction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

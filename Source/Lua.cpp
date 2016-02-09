@@ -4,6 +4,9 @@
 #include <cstdarg>		// For Variable Argument Lists
 #include <exception>
 
+// Other Includes
+#include "LuaFunction.h"
+
 // Using Directives
 using std::dynamic_pointer_cast;
 using std::runtime_error;
@@ -123,6 +126,11 @@ LuaTypePtr LuaFile::Call(string functionName, int expectedResults, vector<LuaTyp
 	lua_pop(m_luaState, expectedResults);
 
 	return luaResult;
+}
+
+void LuaFile::RegisterFunction(LuaFunction * func)
+{
+	lua_register(m_luaState, func->GetName().c_str(), func->GetFunctionPtr());
 }
 
 LuaTypePtr LuaFile::NewNum(double num)

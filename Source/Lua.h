@@ -25,6 +25,9 @@ using std::vector;
 typedef shared_ptr<LuaType> LuaTypePtr;
 typedef vector<LuaTypePtr> LuaFuncList;
 
+// Forward Declarations
+class LuaFunction;
+
 class LuaFile
 {
 private:
@@ -51,6 +54,11 @@ public:
 	 * Lua Function Importing
 	 */
 	LuaTypePtr Call(string functionName, int expectedResults, vector<LuaTypePtr> params);
+
+	/*
+	 * C++ Function Exporting
+	 */
+	void RegisterFunction(LuaFunction* func);
 
 	/*
 	 * Functions to easily produce LuaTypes
